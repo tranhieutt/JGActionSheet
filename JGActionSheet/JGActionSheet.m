@@ -528,6 +528,10 @@ static BOOL disableCustomEasing = NO;
     if (self) {
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
         tap.delegate = self;
+        UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeRecognizer:)];
+        recognizer.direction = UISwipeGestureRecognizerDirectionDown;
+        recognizer.delegate = self;
+        [self addGestureRecognizer:recognizer];
         
         [self addGestureRecognizer:tap];
         
@@ -598,7 +602,11 @@ static BOOL disableCustomEasing = NO;
         self.outsidePressBlock(self);
     }
 }
-
+- (void)swipeRecognizer:(UISwipeGestureRecognizer *)gesture{
+    if ([self hitTest:[gesture locationInView:self] withEvent:nil] == self && self.outsidePressBlock) {
+        self.outsidePressBlock(self);
+    }
+}
 - (void)orientationChanged {
     if (_targetView && !CGRectEqualToRect(self.bounds, _targetView.bounds)) {
         disableCustomEasing = YES;
